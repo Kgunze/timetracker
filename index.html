@@ -22,15 +22,17 @@
 </head>
 <body class="bg-gray-100 min-h-screen p-6">
 
-    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden my-8">
+    <div class="max-w-[95%] mx-auto bg-white shadow-lg rounded-lg overflow-hidden my-8">
         <div class="bg-indigo-600 p-6 text-white">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold">Daily Time Log</h1>
-                    <p class="text-indigo-200 text-sm">Track your daily tasks hour by hour</p>
+                    <h1 class="text-2xl font-bold">Weekly Time Log</h1>
+                    <p class="text-indigo-200 text-sm">Track your weekly tasks hour by hour</p>
                 </div>
-                <div>
+                <div class="flex items-center gap-4">
+                    <button onclick="changeWeek(-1)" class="p-2 hover:bg-indigo-500 rounded text-white transition">← Prev Week</button>
                     <input type="date" id="date-picker" class="text-gray-800 px-3 py-2 rounded shadow border-none focus:ring-2 focus:ring-indigo-400 outline-none">
+                    <button onclick="changeWeek(1)" class="p-2 hover:bg-indigo-500 rounded text-white transition">Next Week →</button>
                 </div>
             </div>
 
@@ -56,15 +58,23 @@
             </div>
         </div>
 
-        <div class="p-6">
-            <div id="slots-container" class="space-y-3">
-                <!-- Slots will be injected here by JS -->
+        <div class="p-4 overflow-x-auto">
+            <div class="min-w-[1000px]">
+                <!-- Grid Header (Dates) -->
+                <div id="grid-header" class="grid grid-cols-8 gap-2 mb-2 sticky top-0 bg-white z-10 pb-2 border-b">
+                    <!-- Injected by JS -->
+                </div>
+
+                <!-- Grid Body (Time Slots) -->
+                <div id="grid-body" class="space-y-2">
+                    <!-- Injected by JS -->
+                </div>
             </div>
         </div>
 
         <div class="bg-gray-50 p-4 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="text-sm text-gray-500">
-                Total Tracked Time: <span id="total-time" class="font-bold text-indigo-600">0h 0m</span>
+                Total Weekly Time: <span id="total-time" class="font-bold text-indigo-600">0h 0m</span>
             </div>
             <div class="flex gap-2">
                 <button onclick="exportToCSV()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition text-sm flex items-center gap-2">
