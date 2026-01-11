@@ -243,10 +243,3 @@ window.connectGoogleDrive = function() {
     alert("Google Drive Integration requires a Google Cloud Project Client ID.\n\nTo enable this:\n1. Create a project in Google Cloud Console.\n2. Enable Google Drive and Sheets API.\n3. Create OAuth 2.0 Client ID.\n4. Add your CLIENT_ID in the source code.\n\nFor now, please use the 'Download .csv' or '.xlsx' buttons and upload to Drive manually.");
 }
 
-window.gapiLoaded = function() {
-    console.log("Google API Client loaded");
-}
-
-window.gisLoaded = function() {
-    console.log("Google Identity Services loaded");
-}
