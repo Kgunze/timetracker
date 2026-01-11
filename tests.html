@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Time Tracker Unit Tests</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Mock SheetJS -->
+    <script>
+        window.XLSX = {
+            utils: {
+                json_to_sheet: () => {},
+                book_new: () => {},
+                book_append_sheet: () => {}
+            },
+            writeFile: () => {}
+        };
+    </script>
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Unit Tests</h1>
+        <div id="test-results" class="space-y-4"></div>
+    </div>
+
+    <script>
+        // Test Runner
+        const resultsContainer = document.getElementById('test-results');
+        let passed = 0;
+        let failed = 0;
+
+        function assert(condition, message) {
+            const div = document.createElement('div');
+            div.className = `p-4 rounded border ${condition ? 'bg-green-100 border-green-400 text-green-800' : 'bg-red-100 border-red-400 text-red-800'}`;
+            div.textContent = `${condition ? '✅ PASS' : '❌ FAIL'}: ${message}`;
+            resultsContainer.appendChild(div);
+            if (condition) passed++; else failed++;
+        }
+
+        function setup() {
+            // Mock LocalStorage
+            const store = {};
+            window.localStorage = {
+                getItem: (key) => store[key],
+                setItem: (key, value) => store[key] = value,
+                clear: () => {}
+            };
+
+            // Reset App State
+            window.dailyData = {};
+            window.currentDate = "2024-01-01";
+            window.userProfile = { name: '', role: '', roleOther: '' };
+        }
+
+        // Tests
+        function testToggleSlot() {
+            setup();
+            window.toggleSlot(0, true);
+            assert(
+                window.dailyData["2024-01-01"][0].checked === true,
+                "toggleSlot should mark slot 0 as checked"
+            );
+            
+            window.toggleSlot(0, false);
+            assert(
+                window.dailyData["2024-01-01"][0].checked === false,
+                "toggleSlot should mark slot 0 as unchecked"
+            );
+        }
+
+        function testUpdateTask() {
+            setup();
+            window.updateTask(5, "Coding");
+            assert(
+                window.dailyData["2024-01-01"][5].task === "Coding",
+                "updateTask should update task description"
+            );
+            assert(
+                window.dailyData["2024-01-01"][5].checked === true,
+                "updateTask should ensure slot is created/checked"
+            );
+        }
+
+        function testUpdateDuration() {
+            setup();
+            
+            window.updateDuration(10, "45");
+            assert(
+                window.dailyData["2024-01-01"][10].duration === 45,
+                "updateDuration should set valid duration"
+            );
+
+            window.updateDuration(10, "90");
+            assert(
+                window.dailyData["2024-01-01"][10].duration === 60,
+                "updateDuration should cap at 60 minutes"
+            );
+
+            window.updateDuration(10, "-10");
+            assert(
+                window.dailyData["2024-01-01"][10].duration === 0,
+                "updateDuration should not allow negative values"
+            );
+        }
+
+        function testExportData() {
+            setup();
+            window.userProfile.name = "TestUser";
+            window.userProfile.role = "Frontend";
+            
+            // Add some data
+            window.dailyData["2024-01-01"] = {
+                "9": { checked: true, task: "Standup", duration: 15 },
+                "10": { checked: true, task: "Dev", duration: 60 }
+            };
+
+            const data = window.prepareExportData();
+            
+            assert(data.length === 2, "Export should return 2 rows");
+            assert(data[0].Name === "TestUser", "Export should include user name");
+            assert(data[0].Role === "Frontend", "Export should include user role");
+            assert(data[0].Task === "Standup", "Export should include task description");
+            assert(data[1].Duration_Minutes === 60, "Export should include duration");
+        }
+
+        function testUserProfile() {
+            setup();
+            window.saveProfile('name', 'Alice');
+            assert(
+                window.userProfile.name === 'Alice',
+                "saveProfile should update user name in state"
+            );
+            
+            window.saveProfile('role', 'Others');
+            window.saveProfile('roleOther', 'Manager');
+            assert(
+                window.userProfile.role === 'Others' && window.userProfile.roleOther === 'Manager',
+                "saveProfile should update role details"
+            );
+        }
+
+        // Run All
+        setTimeout(() => {
+            testToggleSlot();
+            testUpdateTask();
+            testUpdateDuration();
+            testExportData();
+            testUserProfile();
+            
+            // Summary
+            const summary = document.createElement('div');
+            summary.className = "mt-8 text-xl font-bold";
+            summary.innerHTML = `Result: <span class="text-green-600">${passed} Passed</span>, <span class="text-red-600">${failed} Failed</span>`;
+            document.body.appendChild(summary);
+        }, 500);
+
+    </script>
+</body>
+</html>

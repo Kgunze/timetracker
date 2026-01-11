@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelancer Time Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <style>
+        .slot-row {
+            transition: all 0.3s ease;
+        }
+        .slot-active {
+            background-color: #f0fdf4; /* green-50 */
+            border-left: 4px solid #22c55e; /* green-500 */
+        }
+        .slot-inactive {
+            border-left: 4px solid transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden my-8">
+        <div class="bg-indigo-600 p-6 text-white">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold">Daily Time Log</h1>
+                    <p class="text-indigo-200 text-sm">Track your daily tasks hour by hour</p>
+                </div>
+                <div>
+                    <input type="date" id="date-picker" class="text-gray-800 px-3 py-2 rounded shadow border-none focus:ring-2 focus:ring-indigo-400 outline-none">
+                </div>
+            </div>
+
+            <!-- User Profile Section -->
+            <div class="bg-indigo-700 p-4 rounded-lg flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <label class="block text-indigo-200 text-xs mb-1">Full Name</label>
+                    <input type="text" id="user-name" placeholder="John Doe" class="w-full px-3 py-2 rounded text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                </div>
+                <div class="flex-1">
+                    <label class="block text-indigo-200 text-xs mb-1">Job Position</label>
+                    <select id="user-role" class="w-full px-3 py-2 rounded text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" onchange="toggleOtherRole()">
+                        <option value="">Select Role...</option>
+                        <option value="Frontend">Frontend Developer</option>
+                        <option value="Backend">Backend Developer</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="flex-1 hidden" id="other-role-container">
+                    <label class="block text-indigo-200 text-xs mb-1">Specify Role</label>
+                    <input type="text" id="user-role-other" placeholder="e.g. Designer" class="w-full px-3 py-2 rounded text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div id="slots-container" class="space-y-3">
+                <!-- Slots will be injected here by JS -->
+            </div>
+        </div>
+
+        <div class="bg-gray-50 p-4 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-sm text-gray-500">
+                Total Tracked Time: <span id="total-time" class="font-bold text-indigo-600">0h 0m</span>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="exportToCSV()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition text-sm flex items-center gap-2">
+                    <span>Download .csv</span>
+                </button>
+                <button onclick="exportToXLSX()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded shadow transition text-sm flex items-center gap-2">
+                    <span>Download .xlsx</span>
+                </button>
+                <button onclick="connectGoogleDrive()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition text-sm flex items-center gap-2">
+                    <span>Connect Google Drive</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Drive API Placeholder -->
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+
+    <script src="app.js"></script>
+    <script>
+        // Start app when DOM is ready
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
